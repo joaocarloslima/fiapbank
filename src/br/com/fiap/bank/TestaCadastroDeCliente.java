@@ -1,48 +1,37 @@
 package br.com.fiap.bank;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
+import br.com.fiap.bank.dao.ClienteDAO;
+import br.com.fiap.bank.modelo.Cliente;
+import br.com.fiap.bank.util.Mensagem;
+
 public class TestaCadastroDeCliente {
+
 	
 	public static void main(String[] args) {
 		
+		
 		try {
-			Connection connection = ConnectionFactory.getConnection(); 
-			JOptionPane.showMessageDialog(null, "Conectado com sucesso");
 			
-			String nome = JOptionPane.showInputDialog("Nome: ");
-			String cpf = JOptionPane.showInputDialog("CPF: ");
-			String email = JOptionPane.showInputDialog("E-mail: ");
+			ClienteDAO clienteDAO = new ClienteDAO(ConnectionFactory.getConnection());
 			
-			Statement statement = connection.createStatement(); 
-			
-			String sql = String.format(
-					"INSERT INTO clientes (nome, cpf, email) VALUES ('%s', '%s', '%s')", 
-					nome,
-					cpf,
-					email
+			Cliente cliente = new Cliente(
+					JOptionPane.showInputDialog("Nome: "), 
+					JOptionPane.showInputDialog("CPF: "), 
+					JOptionPane.showInputDialog("E-mail: ")
 				);
 			
-			System.out.println(sql);
+			clienteDAO.salvar(cliente);
 			
-			statement.execute(sql);
-			
-			connection.close();
+	
 		}catch(SQLException e) {
-			JOptionPane.showMessageDialog(
-					null, 
-					"Erro ao conectar: " +
-					e.getMessage()
-					);
+			Mensagem.erro("Erro: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-
-		
+	
 		
 	}
 
